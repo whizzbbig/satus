@@ -168,6 +168,5 @@ export const getStaticProps = async ({ preview = false }) => {
     props: {
       homePageData: homePage,
     },
-    revalidate: 1,
   }
 }
