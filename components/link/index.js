@@ -1,27 +1,38 @@
 import NextLink from 'next/link'
-import { forwardRef } from 'react'
+import { forwardRef, useMemo } from 'react'
+
+const SHALLOW_URLS = ['?demo=true']
 
 export const Link = forwardRef(
-  (
-    {
-      href = '',
-      onClick = () => {},
-      onMouseEnter = () => {},
-      children,
+  ({ href, children, className, scroll, shallow, ...props }, ref) => {
+    const attributes = {
+      ref,
       className,
-      style,
-    },
-    ref
-  ) => {
-    const isProtocol = href?.startsWith('mailto:') || href?.startsWith('tel:')
+      ...props,
+    }
 
-    if (isProtocol) {
+    const isProtocol = useMemo(
+      () => href?.startsWith('mailto:') || href?.startsWith('tel:'),
+      [href]
+    )
+
+    const needsShallow = useMemo(
+      () => !!SHALLOW_URLS.find((url) => href?.includes(url)),
+      [href]
+    )
+
+    const isAnchor = useMemo(() => href?.startsWith('#'), [href])
+    const isExternal = useMemo(() => href?.startsWith('http'), [href])
+
+    if (typeof href !== 'string') {
+      return <button {...attributes}>{children}</button>
+    }
+
+    if (isProtocol || isExternal) {
       return (
         <a
+          {...attributes}
           href={href}
-          className={className}
-          style={style}
-          ref={ref}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -30,23 +41,16 @@ export const Link = forwardRef(
       )
     }
 
-    const isAnchor = href?.startsWith('#')
-    const isExternal = href?.startsWith('http')
-    const sanitizedHref = isAnchor
-      ? `${href}`
-      : href?.[0] !== '/' && !isExternal
-      ? `/${href}`
-      : href
-
     return (
-      <NextLink href={sanitizedHref} passHref={isExternal || isAnchor}>
+      <NextLink
+        href={href}
+        passHref={isAnchor}
+        shallow={needsShallow || shallow}
+        scroll={scroll}
+      >
         <a
-          ref={ref}
-          onClick={onClick}
-          onMouseEnter={onMouseEnter}
+          {...attributes}
           {...(isExternal && { target: '_blank', rel: 'noopener noreferrer' })}
-          className={className}
-          style={style}
         >
           {children}
         </a>

@@ -1,12 +1,13 @@
 import * as Accordion from '@radix-ui/react-accordion'
 import { useRect } from '@studio-freight/hamo'
+import { Image } from 'components/image'
 import { Kinesis } from 'components/kinesis'
 import { Link } from 'components/link'
 import { Marquee } from 'components/marquee'
 import { MarqueeScroll } from 'components/marquee-scroll'
 import * as Select from 'components/select'
 import { Slider } from 'components/slider'
-import { CmsMethods, fetchCmsQuery } from 'contentful/api'
+import { fetchCmsQuery } from 'contentful/api'
 import homeQuery from 'contentful/queries/homepage.graphql'
 import { useScroll } from 'hooks/use-scroll'
 import { Layout } from 'layouts/default'
@@ -16,7 +17,7 @@ import s from './home.module.scss'
 const devs = [
   {
     name: 'Franco',
-    position: 'Lords of Lords',
+    position: 'Pizza of Pizza',
     image: 'https://assets.studiofreight.com/devs/franco.png',
   },
   {
@@ -38,35 +39,36 @@ const devs = [
 
 export default function Home({ homePageData }) {
   const rectRef = useRef()
-  const [ref, compute] = useRect()
+  const [setRef, rect] = useRect()
 
-  useScroll(({ scroll }) => {
-    const scrollY = scroll
+  useScroll(
+    ({ scroll }) => {
+      if (!rect.top) return
+      const top = rect.top - scroll
+      const left = rect.left
+      const width = rect.width
+      const height = rect.height
 
-    const rect = compute(scrollY)
-
-    const string = `inView: ${rect.inView}<br>left:${Math.round(
-      rect.left
-    )}px<br>top:${Math.round(rect.top)}px<br>width:${rect.width}px<br>height:${
-      rect.height
-    }px<br>right:${Math.round(rect.right)}px<br>bottom:${Math.round(
-      rect.bottom
-    )}px`
-    rectRef.current.innerHTML = string
-  }, 0)
-
-  console.log('update')
+      const string = `left:${Math.round(left)}px<br>top:${Math.round(
+        top
+      )}px<br>width:${width}px<br>height:${height}px<br>right:${Math.round(
+        left + width
+      )}px<br>bottom:${Math.round(top + height)}px`
+      rectRef.current.innerHTML = string
+    },
+    [rect]
+  )
 
   return (
     <Layout theme="light">
-      <section data-scroll-section className={s.home}>
+      <section className={s.home}>
         <Marquee className={s.marquee} repeat={3}>
-          <span className={s.item}>marquee stuff that scroll continuously</span>
+          <span className={s.item}>{homePageData.title}</span>
         </Marquee>
         <MarqueeScroll className={s.marquee} inverted repeat={4}>
           <span className={s.item}>HOLA JORDAN</span>
         </MarqueeScroll>
-        <Link href={'/#kinesis'}>scroll to kinesis</Link>
+        <Link href="#kinesis">scroll to kinesis</Link>
         <Accordion.Root type="single" collapsible>
           {Array(2)
             .fill({ header: 'this is header', body: 'this is body' })
@@ -94,16 +96,19 @@ export default function Home({ homePageData }) {
                   <p>Slider Title</p>
                 </div>
                 <Slider.Slides ref={emblaRef}>
-                  {devs.map((item, idx) => (
+                  {devs.map(({ image, name, position }, idx) => (
                     <div className={s['slide']} key={`slide-item-${idx}`}>
                       <div className={s['slide-inner']}>
-                        <img
-                          src={item.image}
+                        <Image
+                          src={image}
                           alt=""
+                          width="300"
+                          height="300"
                           className={s['slide-img']}
+                          size="20vw"
                         />
-                        <p className={s['slide-title']}>{item.name}</p>
-                        <p className={s['slide-text']}>{item.position}</p>
+                        <p className={s['slide-title']}>{name}</p>
+                        <p className={s['slide-text']}>{position}</p>
                       </div>
                     </div>
                   ))}
@@ -111,7 +116,7 @@ export default function Home({ homePageData }) {
                 <button onClick={scrollPrev} className={s['slide-buttons']}>
                   previous
                 </button>
-                <button onClick={scrollPrev} className={s['slide-buttons']}>
+                <button onClick={scrollNext} className={s['slide-buttons']}>
                   next
                 </button>
               </div>
@@ -133,11 +138,11 @@ export default function Home({ homePageData }) {
           </Select.Root>
         </div>
 
-        <div style={{ height: '100vh' }}>
+        <div style={{ height: '100vh' }} id="rect">
           <div
             ref={(node) => {
+              setRef(node)
               rectRef.current = node
-              ref(node)
             }}
             style={{
               width: '250px',
@@ -153,21 +158,15 @@ export default function Home({ homePageData }) {
 }
 
 export const getStaticProps = async ({ preview = false }) => {
-  const cmsMethods = new CmsMethods()
   const variables = {
-    pageId: '67aYLZRzNXmiiUsc2GDCnP',
+    pageId: '2oOM1uO09Be1SIhNo4OJOb',
     preview: preview,
   }
-  const fetchHomePage = await fetchCmsQuery(homeQuery, variables)
-  const data = fetchHomePage?.home
-
-  const homePageData = {
-    title: data.title,
-  }
+  const { homePage } = await fetchCmsQuery(homeQuery, variables)
 
   return {
     props: {
-      homePageData,
+      homePageData: homePage,
     },
     revalidate: 1,
   }
