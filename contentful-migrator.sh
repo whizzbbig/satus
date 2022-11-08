@@ -1,3 +1,5 @@
+read -p "Enter the Starter Space ID " starterSpaceId 
+
 read -p "Have you created New Contentful Organization and saved Space ID in the .env.local (y/n)? " answer
 case ${answer:0:1} in
     y|Y )
@@ -14,7 +16,7 @@ echo "Installing Contentful CLI"
 npm i -g contentful-cli
 contentful login
 
-read -p "Do you want to logout or continue with loggin user (y/n)? " answer
+read -p "Do you want to logout(y) or continue with loggin user(n)? " answer
 case ${answer:0:1} in
     y|Y )
         echo Y
@@ -26,8 +28,8 @@ case ${answer:0:1} in
     ;;
 esac
 
-echo "Downloading Contentful Starter"
-contentful space export --download-assets --content-file  exported-file.json --space-id 1z2m50j5knax 
+echo "Downloading Contentful Starter Space ID" $starterSpaceId
+contentful space export --download-assets --content-file  exported-file.json --space-id $starterSpaceId 
 
 echo "Select contentful space Id to migrate from .env.local"
 IFS=$'\n'
