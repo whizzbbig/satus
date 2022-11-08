@@ -68,6 +68,10 @@ This starter kit is composed of:
 
 <br/>
 
+## Usage
+
+- For using Contentful Organization Starter run contentful-migrator.sh and follow the steps.
+
 ## Authors
 
 This toolkit is curated and maintained by the Studio Freight Things team:
