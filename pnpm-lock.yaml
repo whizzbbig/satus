@@ -59,8 +59,8 @@ dependencies:
     specifier: ^2.1.0
     version: 2.1.0
   gsap:
-    specifier: ^3.12.5
-    version: 3.12.5
+    specifier: file:gsap-bonus.tgz
+    version: file:gsap-bonus.tgz
   next:
     specifier: 14.2.1
     version: 14.2.1(@babel/core@7.24.4)(react-dom@18.2.0)(react@18.2.0)(sass@1.75.0)
@@ -4633,10 +4633,6 @@ packages:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
     dev: true
 
-  /gsap@3.12.5:
-    resolution: {integrity: sha512-srBfnk4n+Oe/ZnMIOXt3gT605BX9x5+rh/prT2F1SsNJsU1XuMiP0E2aptW481OnonOGACZWBqseH5Z7csHxhQ==}
-    dev: false
-
   /gzip-size@6.0.0:
     resolution: {integrity: sha512-ax7ZYomf6jqPTQ4+XCpUGyXKHk5WweS+e05MBO4/y3WJ5RkmPXNKvX+bx1behVILVwr6JSQvZAku021CHPXG3Q==}
     engines: {node: '>=10'}
@@ -7175,4 +7171,10 @@ packages:
       '@types/react': 18.2.79
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
+
+  file:gsap-bonus.tgz:
+    resolution: {integrity: sha512-pDhbxDJeZreZORpBacsNwMkJZtmnqwxDU5knDfLIf1l3YIzUggiIe1P2bz5QHu2mK5giSE3qgoZl28JHBoogTQ==, tarball: file:gsap-bonus.tgz}
+    name: gsap
+    version: 3.11.3
     dev: false
