@@ -1,13 +1,14 @@
 'use client'
 
-import { useRect } from '@studio-freight/hamo'
-import { useLenis } from '@studio-freight/react-lenis'
+import { useRect } from '@darkroom.engineering/hamo'
+import { useLenis } from 'libs/lenis'
 import { mapRange } from 'libs/maths'
 import { useEffect, useRef } from 'react'
 import s from './scrollbar.module.scss'
 
 export function Scrollbar() {
   const thumbRef = useRef()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const lenis = useLenis()
   const [innerMeasureRef, { height: innerHeight }] = useRect()
   const [thumbMeasureRef, { height: thumbHeight }] = useRect()
@@ -57,7 +58,7 @@ export function Scrollbar() {
       window.removeEventListener('pointermove', onPointerMove, false)
       window.removeEventListener('pointerup', onPointerUp, false)
     }
-  }, [lenis, innerHeight])
+  }, [lenis, innerHeight, thumbHeight])
 
   return (
     <div className={s.scrollbar}>
